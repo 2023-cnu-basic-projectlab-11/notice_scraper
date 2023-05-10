@@ -13,7 +13,8 @@ abstract class Scraper {
   Future<List<Notice>> scrap();
 }
 
-/// 다트 코드를 이용하여 직접 스크랩하는 scraper
+/// 다트 코드를 이용하여 직접 스크랩하는 scraper.\
+/// HTTP 요청의 편의를 위해, get, post와 같은 메서드와 자동으로 쿠키 ,세션을 관리해주는 기능이 포함되어있다.
 abstract class NativeScraper implements Scraper {
   /// 요청 시 기본적으로 붙는 헤더
   static const defaultHeader = {
