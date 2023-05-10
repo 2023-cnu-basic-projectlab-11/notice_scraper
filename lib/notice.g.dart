@@ -8,26 +8,26 @@ part of 'notice.dart';
 
 Notice _$NoticeFromJson(Map<String, dynamic> json) => Notice(
       json['title'] as String,
-      json['date'] as String,
+      DateTime.parse(json['date'] as String),
       json['body'] as String,
       Origin.fromJson(json['origin'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$NoticeToJson(Notice instance) => <String, dynamic>{
       'title': instance.title,
-      'date': instance.date,
+      'date': instance.date.toIso8601String(),
       'body': instance.body,
-      'origin': instance.origin,
+      'origin': instance.origin.toJson(),
     };
 
 Origin _$OriginFromJson(Map<String, dynamic> json) => Origin(
       json['name'] as String,
       json['description'] as String,
-      json['baseUri'] as String,
+      json['base_uri'] as String,
     );
 
 Map<String, dynamic> _$OriginToJson(Origin instance) => <String, dynamic>{
       'name': instance.name,
       'description': instance.description,
-      'baseUri': instance.baseUri,
+      'base_uri': instance.baseUri,
     };

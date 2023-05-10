@@ -5,11 +5,11 @@ part 'notice.g.dart';
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class Notice {
   final String title;
-  final String date;
+  final DateTime date;
   final String body;
   final Origin origin;
 
-  Notice(this.title, this.date, this.body, this.origin);
+  const Notice(this.title, this.date, this.body, this.origin);
 
   // json serializaion
   factory Notice.fromJson(Map<String, dynamic> json) => _$NoticeFromJson(json);
@@ -22,8 +22,9 @@ class Origin {
   final String description;
   final String baseUri;
 
-  Origin(this.name, this.description, this.baseUri);
+  const Origin(this.name, this.description, this.baseUri);
 
+  // json serializaion
   factory Origin.fromJson(Map<String, dynamic> json) => _$OriginFromJson(json);
   Map<String, dynamic> toJson() => _$OriginToJson(this);
 }
