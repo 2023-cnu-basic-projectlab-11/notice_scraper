@@ -79,11 +79,11 @@ abstract class NativeScraper implements Scraper {
 }
 
 /// 외부 자바스크립트 코드를 이용하는 scraper (아직 미구현)
-class JavaScriptScraper implements Scraper {
+class JavascriptScraper implements Scraper {
   @override
   final Origin origin;
 
-  JavaScriptScraper(this.origin);
+  JavascriptScraper(this.origin);
 
   @override
   Future<List<Notice>> scrap() => throw UnimplementedError();
