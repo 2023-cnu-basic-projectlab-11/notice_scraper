@@ -7,9 +7,14 @@ environment:
   sdk: '>=3.1.0-10.0.dev <4.0.0'
 
 dependencies:
+  encrypt: ^5.0.1
   flutter:
     sdk: flutter
+  html: ^0.15.3
+  html_unescape: ^2.0.0
+  http: ^0.13.6
   json_annotation: ^4.8.0
+  pointycastle: ^3.7.3
 
 dev_dependencies:
   flutter_test:
