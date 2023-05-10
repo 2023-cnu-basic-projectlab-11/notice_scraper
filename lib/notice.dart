@@ -6,10 +6,9 @@ part 'notice.g.dart';
 class Notice {
   final String title;
   final DateTime datetime;
-  final String body;
   final Origin origin;
 
-  const Notice(this.title, this.datetime, this.body, this.origin);
+  const Notice(this.title, this.datetime, this.origin);
 
   // json serializaion
   factory Notice.fromJson(Map<String, dynamic> json) => _$NoticeFromJson(json);

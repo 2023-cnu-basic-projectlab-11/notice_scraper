@@ -9,14 +9,12 @@ part of 'notice.dart';
 Notice _$NoticeFromJson(Map<String, dynamic> json) => Notice(
       json['title'] as String,
       DateTime.parse(json['datetime'] as String),
-      json['body'] as String,
       Origin.fromJson(json['origin'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$NoticeToJson(Notice instance) => <String, dynamic>{
       'title': instance.title,
       'datetime': instance.datetime.toIso8601String(),
-      'body': instance.body,
       'origin': instance.origin.toJson(),
     };
 
