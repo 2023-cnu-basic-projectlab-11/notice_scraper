@@ -24,9 +24,6 @@ class Notice {
 /// 공지 원본 사이트 정보를 담고 있는 모델 클래스
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Origin {
-  /// 식별자. 알파벳과 언더바(_)로 이루어져있다.
-  final String id;
-
   /// 사이트 이름
   final String name;
 
@@ -36,7 +33,7 @@ class Origin {
   /// 사이트 기본 base uri
   final String baseUri;
 
-  const Origin(this.id, this.name, this.description, this.baseUri);
+  const Origin(this.name, this.description, this.baseUri);
 
   // json serializaion
   factory Origin.fromJson(Map<String, dynamic> json) => _$OriginFromJson(json);

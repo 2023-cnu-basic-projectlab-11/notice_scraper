@@ -26,8 +26,7 @@ class CNUCyberCampusScraper extends NativeScraper {
         _password = password;
 
   @override
-  Origin get origin =>
-      const Origin("cnu_cyber_campus", "충남대 사이버캠퍼스", "충남대 사캠 공지입니다.", _homeUri);
+  Origin get origin => const Origin("충남대 사이버캠퍼스", "충남대 사캠 공지입니다.", _homeUri);
 
   final String _id;
   final String _password;
