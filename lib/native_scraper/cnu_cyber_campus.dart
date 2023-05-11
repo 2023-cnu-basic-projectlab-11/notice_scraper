@@ -21,24 +21,29 @@ class CNUCyberCampusScraper extends NativeScraper {
   static const _encryptKey = "dJoviA4NUgrSM73R5uIrNaJtPCd1zA78";
   static const _iv = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-  CNUCyberCampusScraper(this.id, this.password);
+  CNUCyberCampusScraper(String id, String password)
+      : _id = id,
+        _password = password;
 
   @override
   Origin get origin =>
       const Origin("cnu_cyber_campus", "충남대 사이버캠퍼스", "충남대 사캠 공지입니다.", _homeUri);
 
-  final String id;
-  final String password;
+  final String _id;
+  final String _password;
 
   @override
   Future<List<Notice>> scrap() async {
+    // HTTP 요청을 위해 세션 시작
+    startSession();
+
     // 로그인 페이지 접속 & 로그인 폼 데이터 추출
     var response = await get(Uri.https(_loginUri, "/login"));
     final inputs = getLoginFormInput(response.body);
 
     // 로그인 요청을 위한 input 채우기
-    inputs["user_id"] = id;
-    inputs["user_password"] = encryptPassword(inputs['key']!, password);
+    inputs["user_id"] = _id;
+    inputs["user_password"] = encryptPassword(inputs['key']!, _password);
     inputs["univ_no"] = "CNU";
 
     // 로그인 요청
@@ -67,22 +72,28 @@ class CNUCyberCampusScraper extends NativeScraper {
         Uri.https(_homeUri, "$_apiPath/board/std/notice/list"),
         body: {'e': encryptData(noticeRequestBody)});
 
+    // 요청이 완료되었으니 세션 닫기
+    closeSession();
+
     // 응답된 공지 목록 파싱(Notice클래스로 변환)
     return parseNotices(HtmlUnescape()
         .convert(const Utf8Decoder().convert(response.bodyBytes)));
   }
 
+  // json 응답을 Notice로 변환
   List<Notice> parseNotices(String json) => jsonDecode(json)['body']["list"]
       .map<Notice>((e) => Notice("${e['course_nm']}: ${e['boarditem_title']}",
           DateTime.parse(e['insert_dt']), origin))
       .toList();
 
+  // 데이터를 공개 암호화 키로 암호화
   String encryptData(Map<String, String> data) =>
       Encrypter(AES(Key.fromUtf8(_encryptKey), mode: AESMode.cbc))
           .encrypt(jsonEncode(data), iv: IV(Uint8List.fromList(_iv)))
           .base64
           .replaceAll(RegExp(r'[\r|\n]'), '');
 
+  // 비밀번호를 암호화
   String encryptPassword(String key, String password) {
     final parsed = RSAKeyParser()
         .parse("-----BEGIN PUBLIC KEY-----\n$key\n-----END PUBLIC KEY-----");
@@ -92,6 +103,7 @@ class CNUCyberCampusScraper extends NativeScraper {
         .base64;
   }
 
+  // html에서 로그인 폼 정보 가져오기
   Map<String, String> getLoginFormInput(String html) =>
       parser.parse(html).querySelectorAll('form[name=loginForm] input').fold(
           <String, String>{},

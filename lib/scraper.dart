@@ -39,11 +39,11 @@ abstract class NativeScraper implements Scraper {
   final List<Cookie> _cookies = List.empty(growable: true);
 
   /// http 클라이언트
-  final Client _client = Client();
+  Client? _client;
 
   /// HTTP GET request
   Future<Response> get(Uri url, {Map<String, String>? headers}) async {
-    final rsp = await _client.get(url,
+    final rsp = await (_client ?? (_client = Client())).get(url,
         headers: headers == null
             ? _headerWithCookies()
             : (_headerWithCookies()..addAll(headers)));
@@ -54,7 +54,7 @@ abstract class NativeScraper implements Scraper {
   /// HTTP POST request
   Future<Response> post(Uri url,
       {Object? body, Map<String, String>? headers}) async {
-    final rsp = await _client.post(url,
+    final rsp = await (_client ?? (_client = Client())).post(url,
         body: body,
         headers: headers == null
             ? _headerWithCookies()
@@ -76,7 +76,8 @@ abstract class NativeScraper implements Scraper {
           .split(',')
           .map((e) => e.replaceAll(r'\\', ', '));
 
-  void close() => _client.close();
+  void startSession() => _client = Client();
+  void closeSession() => _client?.close();
 }
 
 /// 외부 자바스크립트 코드를 이용하는 scraper (아직 미구현)
