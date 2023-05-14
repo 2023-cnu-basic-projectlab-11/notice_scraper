@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'native_scraper/cnu_cyber_campus.dart';
+import 'package:notice_scraper/native_scrapers/cnu_cyber_campus.dart';
 import 'notice.dart';
 import 'scraper.dart';
 
@@ -39,7 +39,7 @@ class Storage {
 
   Future<List<Notice>> reset() async {
     //scraper = CNUCyberCampusScraper('id', 'password'); // 사용자 입력을 통해 id, 비밀번호를 입력받는 부분을 대신해 임시로 직접 입력
-    notices = await scraper.scrap();
+    notices = await scraper.scrap().toList();
     return notices;
   }
 }
@@ -171,7 +171,7 @@ class _Iphone14pro2WidgetState extends State<Iphone14pro2Widget> {
             onPressed: () {
               scraper_1 =
                   CNUCyberCampusScraper(value1.toString(), value2.toString());
-              info_list = scraper_1.scrap();
+              info_list = scraper_1.scrap().toList();
             },
             style: OutlinedButton.styleFrom(
               foregroundColor: Colors.green,

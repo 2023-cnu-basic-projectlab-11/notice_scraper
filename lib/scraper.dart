@@ -5,12 +5,10 @@ import 'package:notice_scraper/notice.dart';
 
 /// 고수준 scraper 추상 클래스
 abstract class Scraper {
-  /// 스크랩된 원본이 있는 사이트
-  final Origin origin;
-  Scraper(this.origin);
+  Origin get origin;
 
   /// 공지를 스크랩해서 List로 돌려주는 함수 (비동기)
-  Future<List<Notice>> scrap();
+  Stream<Notice> scrap();
 }
 
 /// 다트 코드를 이용하여 직접 스크랩하는 scraper.\
@@ -36,7 +34,7 @@ abstract class NativeScraper implements Scraper {
   };
 
   /// 현재 세션의 쿠키
-  final List<Cookie> _cookies = List.empty(growable: true);
+  final List<Cookie> _cookies = [];
 
   /// http 클라이언트
   Client? _client;
@@ -83,10 +81,9 @@ abstract class NativeScraper implements Scraper {
 /// 외부 자바스크립트 코드를 이용하는 scraper (아직 미구현)
 class JavascriptScraper implements Scraper {
   @override
-  final Origin origin;
-
-  JavascriptScraper(this.origin);
+  Stream<Notice> scrap() => throw UnimplementedError();
 
   @override
-  Future<List<Notice>> scrap() => throw UnimplementedError();
+  // TODO: implement origin
+  Origin get origin => throw UnimplementedError();
 }
