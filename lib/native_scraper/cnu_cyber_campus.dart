@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:notice_scraper/notice.dart';
 import 'package:notice_scraper/scraper.dart';
 import 'dart:convert';
@@ -49,10 +51,12 @@ class CNUCyberCampusScraper extends NativeScraper {
     response = await post(Uri.https(_loginUri, "$_apiPath/user/login"),
         body: {'e': encryptData(inputs)});
 
+    log("[${origin.name}]로그인 결과: ${response.body}");
     // 로그인된 세션을 이용해 공지 불러오기
     // 먼저 학기 목록 불러오기
     response =
         await post(Uri.https(_homeUri, "$_apiPath/term/getYearTermList"));
+    log("[${origin.name}]불러온 학기 목록: ${const Utf8Decoder().convert(response.bodyBytes)}");
 
     // 불러온 목록에서 현재 학기 찾기
     final currentYearTerm = jsonDecode(response.body)["body"]['list']
@@ -70,7 +74,7 @@ class CNUCyberCampusScraper extends NativeScraper {
     response = await post(
         Uri.https(_homeUri, "$_apiPath/board/std/notice/list"),
         body: {'e': encryptData(noticeRequestBody)});
-
+    log("[${origin.name}]불러온 공지 목록: ${const Utf8Decoder().convert(response.bodyBytes)}");
     // 요청이 완료되었으니 세션 닫기
     closeSession();
 
