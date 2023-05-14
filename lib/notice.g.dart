@@ -19,14 +19,12 @@ Map<String, dynamic> _$NoticeToJson(Notice instance) => <String, dynamic>{
     };
 
 Origin _$OriginFromJson(Map<String, dynamic> json) => Origin(
-      json['id'] as String,
       json['name'] as String,
       json['description'] as String,
       json['base_uri'] as String,
     );
 
 Map<String, dynamic> _$OriginToJson(Origin instance) => <String, dynamic>{
-      'id': instance.id,
       'name': instance.name,
       'description': instance.description,
       'base_uri': instance.baseUri,
