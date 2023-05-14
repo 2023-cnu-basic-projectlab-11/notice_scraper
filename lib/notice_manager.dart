@@ -32,7 +32,7 @@ class NoticeManager {
     }
   }
 
-  Future<DateTime?> getLastUpdated(Origin origin) async {
+  Future<DateTime?> getLastUploadedAt(Origin origin) async {
     await _storage.ready;
     return DateTime.tryParse(_storage.getItem(origin.endpointUrl) ?? "");
   }
