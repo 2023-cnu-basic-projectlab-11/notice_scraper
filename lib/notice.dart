@@ -11,10 +11,7 @@ class Notice {
   /// 공지가 올라간 날짜
   final DateTime datetime;
 
-  /// 공지가 올라간 사이트
-  final Origin origin;
-
-  const Notice(this.title, this.datetime, this.origin);
+  const Notice(this.title, this.datetime);
 
   // json serializaion
   factory Notice.fromJson(Map<String, dynamic> json) => _$NoticeFromJson(json);
@@ -28,12 +25,15 @@ class Origin {
   final String name;
 
   /// 사이트 설명
-  final String description;
+  final String? description;
 
-  /// 사이트 기본 base uri
+  /// 사이트 기본 uri (url 아님), 공지 더보기 시 접속되는 경로
   final String baseUri;
 
-  const Origin(this.name, this.description, this.baseUri);
+  /// 최종적으로 정보를 얻어오는 Endpoint의 url, Origin마다 고유해야 함
+  final String endpointUrl;
+
+  const Origin(this.name, this.description, this.baseUri, this.endpointUrl);
 
   // json serializaion
   factory Origin.fromJson(Map<String, dynamic> json) => _$OriginFromJson(json);

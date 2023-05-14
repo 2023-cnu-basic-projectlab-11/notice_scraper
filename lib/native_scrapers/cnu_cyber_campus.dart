@@ -1,11 +1,11 @@
-import 'package:notice_scraper/notice.dart';
-import 'package:notice_scraper/scraper.dart';
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:html_unescape/html_unescape.dart';
-import 'package:pointycastle/export.dart';
-import 'package:html/parser.dart' as parser;
+
+import 'package:notice_scraper/notice.dart';
+import 'package:notice_scraper/scraper.dart';
 import 'package:encrypt/encrypt.dart';
+import 'package:pointycastle/pointycastle.dart';
+import 'package:html/parser.dart' as parser;
 
 class CNUCyberCampusScraper extends NativeScraper {
   /// 로그인 base uri
@@ -26,13 +26,14 @@ class CNUCyberCampusScraper extends NativeScraper {
         _password = password;
 
   @override
-  Origin get origin => const Origin("충남대 사이버캠퍼스", "충남대 사캠 공지입니다.", _homeUri);
+  Origin get origin => const Origin("충남대 사캠 강의 공지", "충남대 사캠 강의 공지입니다.",
+      _homeUri, "https://$_homeUri$_apiPath/board/std/notice/list");
 
   final String _id;
   final String _password;
 
   @override
-  Future<List<Notice>> scrap() async {
+  Stream<Notice> scrap() async* {
     // HTTP 요청을 위해 세션 시작
     startSession();
 
@@ -75,14 +76,17 @@ class CNUCyberCampusScraper extends NativeScraper {
     closeSession();
 
     // 응답된 공지 목록 파싱(Notice클래스로 변환)
-    return parseNotices(HtmlUnescape()
+    final notices = parseNotices(const HtmlEscape()
         .convert(const Utf8Decoder().convert(response.bodyBytes)));
+    yield* Stream.fromIterable(notices);
   }
 
-  // json 응답을 Notice로 변환
+  // json 응답을 NoticeData로 변환
   List<Notice> parseNotices(String json) => jsonDecode(json)['body']["list"]
-      .map<Notice>((e) => Notice("${e['course_nm']}: ${e['boarditem_title']}",
-          DateTime.parse(e['insert_dt']), origin))
+      .map<Notice>((e) => Notice(
+            "${e['course_nm']}: ${e['boarditem_title']}",
+            DateTime.parse(e['insert_dt']),
+          ))
       .toList();
 
   // 데이터를 공개 암호화 키로 암호화
