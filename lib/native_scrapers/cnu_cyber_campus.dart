@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:html_unescape/html_unescape.dart';
 import 'package:notice_scraper/notice.dart';
 import 'package:notice_scraper/scraper.dart';
 import 'dart:convert';
@@ -80,7 +81,7 @@ class CNUCyberCampusScraper extends NativeScraper {
     closeSession();
 
     // 응답된 공지 목록 파싱(Notice클래스로 변환)
-    final notices = parseNotices(const HtmlEscape()
+    final notices = parseNotices(HtmlUnescape()
         .convert(const Utf8Decoder().convert(response.bodyBytes)));
     yield* Stream.fromIterable(notices);
   }
