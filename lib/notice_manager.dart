@@ -10,13 +10,14 @@ class NoticeManager {
   factory NoticeManager() => _instance;
   NoticeManager._internal();
 
-  List<Origin> get origins => scrapers.map((e) => e.origin).toList();
+  Iterable<Origin> get origins => scrapers.map((e) => e.origin);
   final LocalStorage _storage = LocalStorage("latest_updated_times.json");
   final List<Scraper> scrapers = [
     CNUCyberCampusScraper('id', 'password'),
   ];
 
   Stream<Notice> scrap(Origin origin) async* {
+    await _storage.ready;
     final iter = StreamIterator(scrapers
         .firstWhere((s) => s.origin.endpointUrl == origin.endpointUrl)
         .scrap());
@@ -31,6 +32,8 @@ class NoticeManager {
     }
   }
 
-  DateTime? getLastUpdated(Origin origin) =>
-      DateTime.tryParse(_storage.getItem(origin.endpointUrl) ?? "");
+  Future<DateTime?> getLastUpdated(Origin origin) async {
+    await _storage.ready;
+    return DateTime.tryParse(_storage.getItem(origin.endpointUrl) ?? "");
+  }
 }
