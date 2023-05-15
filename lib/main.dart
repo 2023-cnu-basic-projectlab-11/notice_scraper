@@ -41,6 +41,9 @@ class _MyCalcPage extends State<MyCalcPage> {
   String dynamic = "";
   List<Origin> origins = NoticeManager().origins.toList();
 
+  late Scraper scraper_1;
+  late Future<List<Notice>> info_list;
+
   @override
   void initState() {
     super.initState();
@@ -70,17 +73,20 @@ class _MyCalcPage extends State<MyCalcPage> {
               keyboardType: TextInputType.text,
               controller: pw_value,
             ),
-            ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    //사용자에게서 id, 비밀번호 입력받는 부분
-                  });
-                },
-                child: const Text("_buttonText")),
+            OutlinedButton(//실제 id, pw 입력받아 로그인하도록 하는 부분(이렇게 입력받은 정보를 어떻게 실제로 활용할 것인가?)
+              onPressed: () {
+                scraper_1 =
+                    CNUCyberCampusScraper(id_value.toString(), pw_value.toString());
+                info_list = scraper_1.scrap().toList();
+              },
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.green,
+              ),
+              child: const Text('Button'),
+            ),
             // FutureBuilder 예시 코드
 
             FutureBuilder(
-                //이 부분에서 불러온 데이터를 출력할 예정이었으나, 공지를 불러오는 중간 과정을 볼 수 없어 성공/실패 여부를 알 수 없음
                 future: NoticeManager().scrap(origins.first).toList(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   //해당 부분은 data를 아직 받아 오지 못했을 때 실행되는 부분
@@ -122,6 +128,8 @@ class _MyCalcPage extends State<MyCalcPage> {
   }
 }
 
+//사용하지 않는 클래스 주석 처리
+/*
 class Iphone14pro2Widget extends StatefulWidget {
   const Iphone14pro2Widget({super.key});
 
@@ -144,54 +152,41 @@ class _Iphone14pro2WidgetState extends State<Iphone14pro2Widget> {
     return Container(
       width: 393,
       height: 852,
+
       decoration: const BoxDecoration(
         color: Color.fromRGBO(255, 255, 255, 1),
       ),
-      child: Stack(children: <Widget>[
-        Positioned(
-          child: TextField(
-            keyboardType: TextInputType.number,
-            controller: value1,
-          ),
-        ),
-        Positioned(
-          child: TextField(
-            keyboardType: TextInputType.number,
-            controller: value2,
-          ),
-        ),
-        Positioned(
-          child: OutlinedButton(
-            onPressed: () {
-              scraper_1 =
-                  CNUCyberCampusScraper(value1.toString(), value2.toString());
-              info_list = scraper_1.scrap().toList();
-            },
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.green,
+      child: Stack(
+          children: <Widget>[
+            Positioned(
+              child: TextField(
+                keyboardType: TextInputType.number,
+                controller: value1,
+             ),
             ),
-            child: const Text('Button'),
+            Positioned(
+              child: TextField(
+               keyboardType: TextInputType.number,
+               controller: value2,
+              ),
+           ),
+            Positioned(
+             child: OutlinedButton(
+                onPressed: () {
+                  scraper_1 =
+                     CNUCyberCampusScraper(value1.toString(), value2.toString());
+                 info_list = scraper_1.scrap().toList();
+               },
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.green,
+                ),
+               child: const Text('Button'),
           ),
         ),
-        /*
-              Positioned(
-                child: FutureBuilder<List<Notice>>(
-                  future: info_list,
-                  builder: (BuildContext context, AsyncSnapshot<List<Notice>> list){
-                    if (list.hasData) {
-                      return Text('스냅샷 데이터: ${list.data.toString()}');
-                    } else if (list.hasData == false) {
-                      return CircularProgressIndicator();
-                    } else if (list.hasError) {
-                      return Text('스냅샷 에러');
-                    } else {
-                      return Text('혹시 몰라서 else문 추가');
-                    }
-                  },
-                )
-              )
-              */
       ]),
     );
   }
 }
+
+
+ */
