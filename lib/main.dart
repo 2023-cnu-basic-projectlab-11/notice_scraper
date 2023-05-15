@@ -22,19 +22,19 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyCalcPage(),
+      home: const HomeWidget(),
     );
   }
 }
 
-class MyCalcPage extends StatefulWidget {
-  const MyCalcPage({super.key});
+class HomeWidget extends StatefulWidget {
+  const HomeWidget({super.key});
 
   @override
-  State<MyCalcPage> createState() => _MyCalcPage();
+  State<HomeWidget> createState() => _HomeWidget();
 }
 
-class _MyCalcPage extends State<MyCalcPage> {
+class _HomeWidget extends State<HomeWidget> {
   TextEditingController id = TextEditingController(); //id
   TextEditingController pw = TextEditingController(); //password
 
