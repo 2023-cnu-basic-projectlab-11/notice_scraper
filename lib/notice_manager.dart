@@ -1,25 +1,20 @@
 import 'dart:async';
 
 import 'package:localstorage/localstorage.dart';
-import 'package:notice_scraper/native_scrapers/cnu_cyber_campus.dart';
 import 'package:notice_scraper/notice.dart';
 import 'package:notice_scraper/scraper.dart';
-
-// 임시로 추가한 사캠 아이디 비번
-const id = "id";
-const pw = "pw";
 
 class NoticeManager {
   static final NoticeManager _instance = NoticeManager._internal();
   factory NoticeManager() => _instance;
   NoticeManager._internal();
 
-  Iterable<Origin> get origins => _scrapers.map((e) => e.origin);
+  Iterable<Origin> get origins => scrapers.map((e) => e.origin);
   final LocalStorage _storage = LocalStorage("latest_updated_times.json");
-  final List<Scraper> _scrapers = [CNUCyberCampusScraper(id, pw)];
+  List<Scraper> scrapers = [];
 
   Stream<Notice> scrap(Origin origin) async* {
-    final iter = StreamIterator(_scrapers
+    final iter = StreamIterator(scrapers
         .firstWhere((s) => s.origin.endpointUrl == origin.endpointUrl)
         .scrap());
 
