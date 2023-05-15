@@ -71,7 +71,6 @@ class CNUCyberCampusScraper extends NativeScraper {
       'term_year': currentYearTerm['term_year']!.toString(),
       'limit': '100'
     };
-
     // 공지 목록 요청
     response = await post(
         Uri.https(_homeUri, "$_apiPath/board/std/notice/list"),

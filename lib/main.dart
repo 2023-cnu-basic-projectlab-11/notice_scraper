@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:notice_scraper/native_scrapers/cnu_cyber_campus.dart';
+import 'package:notice_scraper/notice_manager.dart';
 import 'notice.dart';
 import 'scraper.dart';
+
+import 'dart:developer';
 
 void main() {
   runApp(const MainApp());
@@ -32,23 +35,11 @@ class MyCalcPage extends StatefulWidget {
   State<MyCalcPage> createState() => _MyCalcPage();
 }
 
-class Storage {
-  //필요한 정보를 미리 받아 저장하는 클래스
-  late Scraper scraper;
-  late List<Notice> notices;
-
-  Future<List<Notice>> reset() async {
-    //scraper = CNUCyberCampusScraper('id', 'password'); // 사용자 입력을 통해 id, 비밀번호를 입력받는 부분을 대신해 임시로 직접 입력
-    notices = await scraper.scrap().toList();
-    return notices;
-  }
-}
-
 class _MyCalcPage extends State<MyCalcPage> {
   TextEditingController id_value = TextEditingController(); //id
   TextEditingController pw_value = TextEditingController(); //password
-  Storage storage_0 = Storage();
   String dynamic = "";
+  List<Origin> origins = NoticeManager().origins.toList();
 
   @override
   void initState() {
@@ -71,11 +62,26 @@ class _MyCalcPage extends State<MyCalcPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            TextField(
+              keyboardType: TextInputType.text,
+              controller: id_value,
+            ),
+            TextField(
+              keyboardType: TextInputType.text,
+              controller: pw_value,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    //사용자에게서 id, 비밀번호 입력받는 부분
+                  });
+                },
+                child: const Text("_buttonText")),
             // FutureBuilder 예시 코드
 
             FutureBuilder(
                 //이 부분에서 불러온 데이터를 출력할 예정이었으나, 공지를 불러오는 중간 과정을 볼 수 없어 성공/실패 여부를 알 수 없음
-                future: storage_0.reset(),
+                future: NoticeManager().scrap(origins.first).toList(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   //해당 부분은 data를 아직 받아 오지 못했을 때 실행되는 부분
                   if (snapshot.hasData == false) {
@@ -95,6 +101,10 @@ class _MyCalcPage extends State<MyCalcPage> {
 
                   // 데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 부분
                   else {
+                    // 정상적으로 업데이트 시간이 갱신되었는지 확인
+                    NoticeManager()
+                        .getLastUploadedAt(origins.first)
+                        .then((value) => log(value.toString()));
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
@@ -105,22 +115,6 @@ class _MyCalcPage extends State<MyCalcPage> {
                     );
                   }
                 }),
-
-            TextField(
-              keyboardType: TextInputType.number,
-              controller: id_value,
-            ),
-            TextField(
-              keyboardType: TextInputType.number,
-              controller: pw_value,
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    //사용자에게서 id, 비밀번호 입력받는 부분
-                  });
-                },
-                child: const Text("_buttonText"))
           ],
         ),
       ),

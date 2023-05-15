@@ -75,7 +75,11 @@ abstract class NativeScraper implements Scraper {
           .map((e) => e.replaceAll(r'\\', ', '));
 
   void startSession() => _client = Client();
-  void closeSession() => _client?.close();
+  void closeSession() {
+    _cookies.clear();
+    _client?.close();
+    _client = null;
+  }
 }
 
 /// 외부 자바스크립트 코드를 이용하는 scraper (아직 미구현)
