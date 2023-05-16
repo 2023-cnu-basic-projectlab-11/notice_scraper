@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:notice_scraper/notice.dart';
 import 'package:notice_scraper/scraper.dart';
 import 'package:html/parser.dart' as parser;
@@ -19,7 +17,6 @@ class CNUCollegeEngScraper extends NativeScraper {
   @override
   Stream<Notice> scrap() async* {
     startSession();
-
     int page = 0;
     while (true) {
       final notices = await _scrap(page++);

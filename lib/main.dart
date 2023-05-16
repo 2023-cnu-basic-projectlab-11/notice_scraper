@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:notice_scraper/home.dart';
 import 'package:notice_scraper/native_scrapers/cnu_college_eng.dart';
-import 'package:notice_scraper/native_scrapers/cnu_cyber_campus.dart';
+//import 'package:notice_scraper/native_scrapers/cnu_cyber_campus.dart';
 import 'notice.dart';
 import 'scraper.dart';
 
@@ -18,12 +20,17 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'TabBar',
+      title: 'Notice Scraper',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        textTheme: GoogleFonts.nanumGothicTextTheme(),
+        useMaterial3: true,
       ),
-      home: const HomeWidget(),
+      darkTheme: ThemeData(
+          textTheme: GoogleFonts.nanumGothicTextTheme(),
+          useMaterial3: true,
+          brightness: Brightness.dark),
+      themeMode: ThemeMode.system,
+      home: Homepage(),
     );
   }
 }
