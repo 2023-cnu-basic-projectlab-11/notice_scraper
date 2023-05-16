@@ -8,6 +8,7 @@ import 'notice.dart';
 import 'scraper.dart';
 import 'dart:math' as math;
 import 'dart:developer';
+import 'noticeList.dart';
 
 void main() {
   runApp(const MainApp());
