@@ -7,6 +7,7 @@ import 'package:notice_scraper/native_scrapers/cnu_college_eng.dart';
 import 'notice.dart';
 import 'scraper.dart';
 import 'dart:developer';
+import 'noticeList.dart';
 
 void main() {
   runApp(const MainApp());
@@ -128,6 +129,7 @@ class _HomeWidget extends State<HomeWidget> {
   }
 }
 
+<<<<<<< HEAD
 Widget noticeToWidget(Notice notice) {
   //origin 반영
   // Figma Flutter Generator Elevation6Widget - FRAME
@@ -231,6 +233,8 @@ Widget noticeToWidget(Notice notice) {
       ]));
   //notice 불러오기,위젯 변환, 리스트로 구성
 }
+=======
+>>>>>>> ee1dbe06a3efe82fd22d77ecc1a63d629058bc05
 
 Iterable<Widget> noticesToWidgets(List<Notice> notices) sync* {
   for (int i = 0; i < notices.length; i++) {
