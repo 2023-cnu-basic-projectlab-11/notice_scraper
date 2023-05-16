@@ -63,12 +63,12 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidget extends State<HomeWidget> {
   TextEditingController id = TextEditingController(); //id
   TextEditingController pw = TextEditingController(); //password
-
+  int length=1;
   Scraper scraper_1 = CNUCollegeEngScraper();
   Future<List<Notice>> notices = Future.value([]);
 
   _HomeWidget() {
-    notices = scraper_1.scrap().take(30).toList().catchError((e) {
+    notices = scraper_1.scrap().take(1).toList().catchError((e) {//take(30)
       log("error");
       return [Notice("알수없음", DateTime.now())];
     });
@@ -79,10 +79,10 @@ class _HomeWidget extends State<HomeWidget> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("widget.title"),
+        title: const Text("UI-proto"),
       ),
       body: FutureBuilder(future: notices, builder: (ctx, snapshot) {
-        return snapshot.data == null ? Text('없음') : Center(
+        return snapshot.data == null ? Text('loading...') : Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -95,11 +95,10 @@ class _HomeWidget extends State<HomeWidget> {
                 controller: pw,
               ),
               OutlinedButton(
-                //실제 id, pw 입력받아 로그인하도록 하는 부분(이렇게 입력받은 정보를 어떻게 실제로 활용할 것인가?)
                 onPressed: () => setState(() {
                   //scraper_1 = CNUCyberCampusScraper(id.text, pw.text);
                   scraper_1 = CNUCollegeEngScraper();
-                  notices = scraper_1.scrap().take(30).toList().catchError((e) {
+                  notices = scraper_1.scrap().take(++length).toList().catchError((e) {
                     log("error");
                     return [Notice("알수없음", DateTime.now())];
                   });
@@ -107,12 +106,11 @@ class _HomeWidget extends State<HomeWidget> {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.green,
                 ),
-                child: const Text('Button'),
+                child: const Text('공지 더 불러오기'),
               ),
             ]..addAll(noticesToWidgets(snapshot.data ?? [])),
           ),
         );
-
       },)
     );
   }

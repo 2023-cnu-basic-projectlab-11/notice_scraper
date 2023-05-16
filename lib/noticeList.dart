@@ -2,6 +2,63 @@ import 'package:flutter/cupertino.dart';
 
 import 'notice.dart';
 
+import 'package:flutter/material.dart';
+
+/// Flutter code sample for [CustomScrollView].
+
+
+
+/*스크롤뷰 실험
+class CustomScrollViewExample extends StatefulWidget {
+  const CustomScrollViewExample({super.key});
+
+  @override
+  State<CustomScrollViewExample> createState() =>
+      _CustomScrollViewExampleState();
+}
+
+class _CustomScrollViewExampleState extends State<CustomScrollViewExample> {
+  List<int> bottom = <int>[0];
+
+  @override
+  Widget build(BuildContext context) {
+    const Key centerKey = ValueKey<String>('bottom-sliver-list');
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Press on the plus to add items above and below'),
+        leading: IconButton(
+          icon: const Icon(Icons.add),
+          onPressed: () {
+            setState(() {
+              bottom.add(bottom.length);
+            });
+          },
+        ),
+      ),
+      body: CustomScrollView(
+        center: centerKey,
+        slivers: <Widget>[
+          SliverList(
+            key: centerKey,
+            delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                return Container(
+                  alignment: Alignment.center,
+                  color: Colors.blue[200 + bottom[index] % 4 * 100],
+                  height: 100 + bottom[index] % 4 * 20.0,
+                  child: Text('Item: ${bottom[index]}'),
+                );
+              },
+              childCount: bottom.length,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+*/
+
 Widget noticeToWidget(Notice notice) {
   //origin 반영
   // Figma Flutter Generator Elevation6Widget - FRAME
