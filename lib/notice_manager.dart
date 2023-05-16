@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:ffi';
+//import 'dart:ffi';
 
 import 'package:localstorage/localstorage.dart';
 import 'package:notice_scraper/notice.dart';
