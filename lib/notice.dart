@@ -11,11 +11,22 @@ class Notice {
   /// 공지가 올라간 날짜
   final DateTime datetime;
 
+  /// index는 notice를 구분할때 쓰는 위한 별도의 값이 있다면 적는 란이다. index가 클 수록 최근의 공지로 판단.\
+  /// 안적을 시 기본적으로 시간을 기준으로 구분한다. (즉 업로드 시간이 같다면 같은 공지로 판단)
   const Notice(this.title, this.datetime);
+
+  @override
+  int get hashCode => datetime.millisecondsSinceEpoch;
 
   // json serializaion
   factory Notice.fromJson(Map<String, dynamic> json) => _$NoticeFromJson(json);
   Map<String, dynamic> toJson() => _$NoticeToJson(this);
+
+  @override
+  bool operator ==(Object other) =>
+      other is Notice &&
+      other.title == title &&
+      other.datetime.isAtSameMomentAs(datetime);
 }
 
 /// 공지 원본 사이트 정보를 담고 있는 모델 클래스
