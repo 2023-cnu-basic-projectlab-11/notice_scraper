@@ -41,10 +41,8 @@ abstract class NativeScraper implements Scraper {
 
   /// HTTP GET request
   Future<Response> get(Uri url, {Map<String, String>? headers}) async {
-    final rsp = await (_client ?? (_client = Client())).get(url,
-        headers: headers == null
-            ? _headerWithCookies()
-            : (_headerWithCookies()..addAll(headers)));
+    final rsp = await (_client ?? _createClient())
+        .get(url, headers: _buildHeader(headers));
     _addCookies(rsp);
     return rsp;
   }
@@ -52,13 +50,16 @@ abstract class NativeScraper implements Scraper {
   /// HTTP POST request
   Future<Response> post(Uri url,
       {Object? body, Map<String, String>? headers}) async {
-    final rsp = await (_client ?? (_client = Client())).post(url,
-        body: body,
-        headers: headers == null
-            ? _headerWithCookies()
-            : (_headerWithCookies()..addAll(headers)));
+    final rsp = await (_client ?? _createClient())
+        .post(url, body: body, headers: _buildHeader(headers));
     _addCookies(rsp);
     return rsp;
+  }
+
+  Map<String, String>? _buildHeader(Map<String, String>? extra) {
+    return extra == null
+        ? _headerWithCookies()
+        : (_headerWithCookies()..addAll(extra));
   }
 
   Map<String, String> _headerWithCookies() =>
@@ -74,11 +75,16 @@ abstract class NativeScraper implements Scraper {
           .split(',')
           .map((e) => e.replaceAll(r'\\', ', '));
 
-  void startSession() => _client = Client();
+  void startSession() => _client = _createClient();
   void closeSession() {
     _cookies.clear();
     _client?.close();
     _client = null;
+  }
+
+  Client _createClient() {
+    _client = Client();
+    return _client!;
   }
 }
 
