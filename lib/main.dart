@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:notice_scraper/native_scrapers/cnu_college_eng.dart';
 import 'package:notice_scraper/native_scrapers/cnu_cyber_campus.dart';
 import 'notice.dart';
 import 'scraper.dart';
@@ -63,8 +64,9 @@ class _HomeWidget extends State<HomeWidget> {
             OutlinedButton(
               //실제 id, pw 입력받아 로그인하도록 하는 부분(이렇게 입력받은 정보를 어떻게 실제로 활용할 것인가?)
               onPressed: () => setState(() {
-                scraper_1 = CNUCyberCampusScraper(id.text, pw.text);
-                notices = scraper_1.scrap().toList().catchError((e) {
+                //scraper_1 = CNUCyberCampusScraper(id.text, pw.text);
+                scraper_1 = CNUCollegeEngScraper();
+                notices = scraper_1.scrap().take(30).toList().catchError((e) {
                   log("error");
                   return [Notice("알수없음", DateTime.now())];
                 });
