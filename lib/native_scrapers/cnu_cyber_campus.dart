@@ -35,11 +35,7 @@ class CNUCyberCampusScraper extends NativeScraper {
   final String _id;
   final String _password;
 
-  @override
-  Stream<Notice> scrap() async* {
-    // HTTP 요청을 위해 세션 시작
-    startSession();
-
+  Future<void> login() async {
     // 로그인 페이지 접속 & 로그인 폼 데이터 추출
     var response = await get(Uri.https(_loginUri, "/login"));
     final inputs = getLoginFormInput(response.body);
@@ -54,35 +50,55 @@ class CNUCyberCampusScraper extends NativeScraper {
         body: {'e': encryptData(inputs)});
 
     log("[${origin.name}]로그인 결과: ${response.body}");
+  }
+
+  @override
+  Future<List<Notice>> scrap([int offset = 0, int limit = 50]) async {
+    // HTTP 요청을 위해 세션 시작
+    if (!isSessionStarted) startSession();
     // 로그인된 세션을 이용해 공지 불러오기
     // 먼저 학기 목록 불러오기
-    response =
+    var response =
         await post(Uri.https(_homeUri, "$_apiPath/term/getYearTermList"));
-    log("[${origin.name}]불러온 학기 목록: ${const Utf8Decoder().convert(response.bodyBytes)}");
 
     // 불러온 목록에서 현재 학기 찾기
-    final currentYearTerm = jsonDecode(response.body)["body"]['list']
-        .firstWhere((element) => element['current_term_yn'] == "Y");
+    late final Map<String, dynamic> currentYearTerm;
+    try {
+      currentYearTerm = jsonDecode(response.body)["body"]['list']
+          .firstWhere((element) => element['current_term_yn'] == "Y");
+    } catch (e) {
+      await login();
+      response =
+          await post(Uri.https(_homeUri, "$_apiPath/term/getYearTermList"));
+      currentYearTerm = jsonDecode(response.body)["body"]['list']
+          .firstWhere((element) => element['current_term_yn'] == "Y");
+    }
+
+    log("[${origin.name}]불러온 학기 목록: ${const Utf8Decoder().convert(response.bodyBytes)}");
 
     // 공지 불러오는 요청 작성
     final noticeRequestBody = {
       'type': 'notice',
       'term_cd': currentYearTerm['term_cd']!.toString(),
       'term_year': currentYearTerm['term_year']!.toString(),
-      'limit': '100'
+      'limit': limit.toString(),
+      'offset': offset.toString(),
     };
     // 공지 목록 요청
     response = await post(
         Uri.https(_homeUri, "$_apiPath/board/std/notice/list"),
         body: {'e': encryptData(noticeRequestBody)});
     log("[${origin.name}]불러온 공지 목록: ${const Utf8Decoder().convert(response.bodyBytes)}");
-    // 요청이 완료되었으니 세션 닫기
-    closeSession();
 
     // 응답된 공지 목록 파싱(Notice클래스로 변환)
-    final notices = parseNotices(HtmlUnescape()
-        .convert(const Utf8Decoder().convert(response.bodyBytes)));
-    yield* Stream.fromIterable(notices);
+    try {
+      final notices = parseNotices(HtmlUnescape()
+          .convert(const Utf8Decoder().convert(response.bodyBytes)));
+
+      return notices.length > limit ? notices.sublist(0, limit) : notices;
+    } catch (e) {
+      return [];
+    }
   }
 
   // json 응답을 NoticeData로 변환

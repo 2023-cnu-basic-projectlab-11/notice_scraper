@@ -7,35 +7,27 @@ class CNUCollegeEngScraper extends NativeScraper {
 
   static const _noticePath = "/eng/information/notice.do";
 
-  static const int _offset = 0;
-  static const int _limit = 50;
-
   @override
   Origin get origin => const Origin('충남대 공과대학 공지', '충남대 공과대학 공지사항입니다.',
       _homeUri, 'https://$_homeUri$_noticePath');
 
   @override
-  Stream<Notice> scrap() async* {
+  Future<List<Notice>> scrap([int offset = 0, int limit = 50]) async {
     startSession();
-    int page = 0;
-    while (true) {
-      final notices = await _scrap(page++);
-      if (notices == null) break;
-      yield* Stream.fromIterable(notices);
-    }
-    closeSession();
+    final notices = await _scrap(offset, limit);
+    return notices ?? [];
   }
 
   DateTime _dateFormat(String? date) => date == null
       ? DateTime.now()
       : DateTime.parse("20$date".replaceAll('.', '-'));
 
-  Future<Iterable<Notice>?> _scrap(int page) async {
+  Future<List<Notice>?> _scrap(int offset, int limit) async {
     // 공지가 있는 사이트 접속
     final response = await get(Uri.https(_homeUri, _noticePath, {
       'mode': 'list',
-      'articleLimit': _limit.toString(),
-      'article.offset': (_offset * page).toString(),
+      'articleLimit': limit.toString(),
+      'article.offset': offset.toString(),
     }));
 
     // 공지가 들어있는 Element 추출
@@ -52,10 +44,12 @@ class CNUCollegeEngScraper extends NativeScraper {
     }
 
     // Element에서 공지로 파싱
-    final notices = noticeElements.map((e) => Notice(
-          e.querySelector('.b-title-box a')?.text.trim() ?? "제목없음",
-          _dateFormat(e.querySelector('.b-date')?.text.trim()),
-        ));
+    final notices = noticeElements
+        .map((e) => Notice(
+              e.querySelector('.b-title-box a')?.text.trim() ?? "제목없음",
+              _dateFormat(e.querySelector('.b-date')?.text.trim()),
+            ))
+        .toList();
     return notices;
   }
 }

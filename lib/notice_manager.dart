@@ -1,8 +1,5 @@
 import 'dart:async';
-<<<<<<< HEAD
-=======
-//import 'dart:ffi';
->>>>>>> f986dae91ede7830620e6755d335d7b4ec32fda3
+import 'dart:developer';
 
 import 'package:localstorage/localstorage.dart';
 import 'package:notice_scraper/notice.dart';
@@ -15,36 +12,38 @@ class NoticeManager {
 
   Iterable<Origin> get origins => scrapers.map((e) => e.origin);
   final LocalStorage _storage = LocalStorage("latest_updated_times.json");
+  int perPage = 50;
   List<Scraper> scrapers = [];
 
-  Stream<Notice> scrap(Origin origin) async* {
+  Future<List<Notice>> scrap(Origin origin, [int page = 0]) async {
     await _storage.ready;
-    final iter = StreamIterator(scrapers
-        .firstWhere((s) => s.origin.endpointUrl == origin.endpointUrl)
-        .scrap());
+    log('Scrap notices from ${origin.name}');
+    final scraper =
+        scrapers.firstWhere((s) => s.origin.endpointUrl == origin.endpointUrl);
+    final notices = await scraper.scrap(page * perPage, perPage);
 
-    if (await iter.moveNext()) {
-      // 가장 최근 공지(첫번쨰로 나오는 공지)를 가져옴
-      final item = iter.current;
-      yield item;
+    if (page == 0) {
+      final item = notices.firstOrNull;
+      if (item == null) return [];
 
-      // 해당 공지가 연속으로 얼마나 나오는지 체크
-      int count = 1;
-      while (await iter.moveNext()) {
-        yield iter.current;
-        if (item != iter.current) break;
-        count++;
-      }
+      int count = 0;
+      var _notices = notices;
+      do {
+        for (var notice in _notices) {
+          if (notice != item) break;
+          count++;
+        }
 
-      // 얻은 공지를 중복 횟수와 함께 저장
-      await _storage.setItem(
+        if (count < (++page) * perPage) break;
+
+        _notices = await scraper.scrap(page * perPage, perPage);
+      } while (true);
+      log('latest notice "${item.title}" found($count) at ${item.datetime.toString()}.');
+      _storage.setItem(
           origin.endpointUrl, item.toJson()..addAll({'count': count}));
-
-      // 나머지는 그대로 출력
-      while (await iter.moveNext()) {
-        yield iter.current;
-      }
     }
+
+    return notices;
   }
 
   /// 해당 Origin에서 가장 최근에 scrap된 공지를 반환한다. 중복을 구분하기 위해 연속으로 몇번 나왔는지에 대한 정수값과 함께 제공된다.

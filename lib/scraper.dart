@@ -8,7 +8,7 @@ abstract class Scraper {
   Origin get origin;
 
   /// 공지를 스크랩해서 List로 돌려주는 함수 (비동기)
-  Stream<Notice> scrap();
+  Future<List<Notice>> scrap([int offset = 0, int limit = 50]);
 }
 
 /// 다트 코드를 이용하여 직접 스크랩하는 scraper.\
@@ -34,10 +34,11 @@ abstract class NativeScraper implements Scraper {
   };
 
   /// 현재 세션의 쿠키
-  final List<Cookie> _cookies = [];
+  final Map<String, Cookie> _cookies = {};
 
   /// http 클라이언트
   Client? _client;
+  bool get isSessionStarted => _client != null;
 
   /// HTTP GET request
   Future<Response> get(Uri url, {Map<String, String>? headers}) async {
@@ -63,11 +64,13 @@ abstract class NativeScraper implements Scraper {
   }
 
   Map<String, String> _headerWithCookies() =>
-      Map.from(defaultHeader)..addAll({'Cookie': _cookies.join('; ')});
+      Map.from(defaultHeader)..addAll({'Cookie': _cookies.values.join('; ')});
 
-  List<Cookie> _addCookies(Response response) => _cookies
-    ..addAll(
-        _getCookies(response)?.map((e) => Cookie.fromSetCookieValue(e)) ?? []);
+  Map<String, Cookie> _addCookies(Response response) => (_cookies
+    ..addEntries(
+      (_getCookies(response)?.map((e) => Cookie.fromSetCookieValue(e)) ?? [])
+          .map((e) => MapEntry(e.name, e)),
+    ));
 
   Iterable<String>? _getCookies(Response response) =>
       response.headers["set-cookie"]
@@ -91,9 +94,12 @@ abstract class NativeScraper implements Scraper {
 /// 외부 자바스크립트 코드를 이용하는 scraper (아직 미구현)
 class JavascriptScraper implements Scraper {
   @override
-  Stream<Notice> scrap() => throw UnimplementedError();
-
-  @override
   // TODO: implement origin
   Origin get origin => throw UnimplementedError();
+
+  @override
+  Future<List<Notice>> scrap([int offset = 0, int limit = 50]) {
+    // TODO: implement scrap
+    throw UnimplementedError();
+  }
 }
