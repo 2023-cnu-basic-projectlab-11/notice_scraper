@@ -27,16 +27,16 @@ class NoticeManager {
       if (item == null) return [];
 
       int count = 0;
-      var _notices = notices;
+      var searchNotices = notices;
       do {
-        for (var notice in _notices) {
+        for (var notice in searchNotices) {
           if (notice != item) break;
           count++;
         }
 
         if (count < (++page) * perPage) break;
 
-        _notices = await scraper.scrap(page * perPage, perPage);
+        searchNotices = await scraper.scrap(page * perPage, perPage);
       } while (true);
       log('latest notice "${item.title}" found($count) at ${item.datetime.toString()}.');
       _storage.setItem(
