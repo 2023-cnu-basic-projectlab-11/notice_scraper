@@ -21,7 +21,7 @@ ThemeData _buildTheme(brightness) {
 void main() {
   NoticeManager().scrapers = [
     CNUCollegeEngScraper(),
-    CNUCyberCampusScraper('202202573', 'wormskarf#12')
+    CNUCyberCampusScraper('id', 'pw')
   ];
   NoticeManager().perPage = 10;
   runApp(const MainApp());
