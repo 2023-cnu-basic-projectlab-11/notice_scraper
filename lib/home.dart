@@ -55,7 +55,7 @@ class HomepageState extends State<Homepage> {
               .map((e) => e.origin)
               .map((origin) => NavigationDrawerDestination(
                     label: Text(origin.name),
-                    icon: const Icon(Icons.circle, size: 0.5),
+                    icon: const Icon(Icons.circle, size: 8),
                   )),
           const Divider(),
         ],
