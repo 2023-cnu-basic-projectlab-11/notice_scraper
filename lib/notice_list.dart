@@ -31,7 +31,10 @@ class _NoticeListState extends State<NoticeList> {
         child: ListView.separated(
           itemBuilder: (ctx, i) {
             if (i == notices.length) {
-              if (_isEnd) return const Text('마지막 공지사항입니다.');
+              if (_isEnd) {
+                return const Center(
+                    heightFactor: 5, child: Text('마지막 공지사항입니다.'));
+              }
               // list의 끝에 도달했을 시, 새로 로딩을 한다.
               log('Scroll end. load more notices...');
               // 새로고침과 동시에 일어날 경우 꼬이는 것을 방지하기 위해 현재 notice 리스트의 참조를 캐싱
