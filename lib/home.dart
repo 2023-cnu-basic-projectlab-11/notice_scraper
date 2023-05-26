@@ -4,17 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:notice_scraper/notice.dart';
 import 'package:notice_scraper/notice_list.dart';
 import 'package:notice_scraper/notice_manager.dart';
+import 'package:notice_scraper/site_add.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
-
   @override
   State<StatefulWidget> createState() => HomepageState();
 }
 
 class HomepageState extends State<Homepage> {
   int selectedIndex = 0;
+  String newURL='';
   Origin? get currentOrigin => lists.elementAtOrNull(selectedIndex)?.origin;
   final List<NoticeList> lists = NoticeManager()
       .origins
@@ -58,11 +59,26 @@ class HomepageState extends State<Homepage> {
                     icon: const Icon(Icons.circle, size: 8),
                   )),
           const Divider(),
+          FloatingActionButton(
+            onPressed: () => {
+              siteAdd(),
+            },
+            child: const Icon(Icons.add),
+          ),
         ],
       ),
       body: currentOrigin == null
           ? const Text('등록된 사이트가 없습니다.')
-          : IndexedStack(index: selectedIndex, children: lists),
+          : Column(children: [
+            Flexible(
+              flex: 1,
+                child: upperList()
+            ),
+            Expanded(
+              flex: 10,
+              child: IndexedStack(index: selectedIndex, children: lists),
+            )
+        ]),
       floatingActionButton: currentOrigin == null
           ? null
           : FloatingActionButton(
@@ -75,6 +91,7 @@ class HomepageState extends State<Homepage> {
   void onPressedPerson() {
     log('Person button pressed');
   }
+
 
   Future<void> _buildOriginDialog(BuildContext context, Origin origin) {
     return showDialog<void>(
@@ -116,6 +133,7 @@ class HomepageState extends State<Homepage> {
         constraints: const BoxConstraints.expand(height: 56),
         child: inner,
       );
+
   Widget bulletElement(String text) => Row(children: [
         const Text(
           "\u2022",
@@ -130,6 +148,33 @@ class HomepageState extends State<Homepage> {
           ), //text
         )
       ]);
+
+  Widget upperList(){
+    List<String> strlist=["공대", "사캠", "-", "-", "-", "-", "-", "-", "-", "-"];
+
+    return ListView.separated(
+      padding: const EdgeInsets.all(5),
+      itemCount: strlist.length,
+      scrollDirection: Axis.horizontal,
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          child: Column(
+            children: [
+              FloatingActionButton(
+                  child: Text(strlist.elementAt(index)),
+                  onPressed: (){
+                    setState(() {
+                      selectedIndex=index;
+                    });
+                  }
+              )
+            ],
+          ),
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) => const Divider(),
+    );
+  }
 
   Future<void> _launchUrl(String source) async {
     if (!await launchUrl(Uri.https(source))) {
