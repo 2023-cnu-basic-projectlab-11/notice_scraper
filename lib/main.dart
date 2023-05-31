@@ -22,7 +22,7 @@ ThemeData _buildTheme(brightness) {
 void main() {
   NoticeManager().scrapers = [
     CNUCollegeEngScraper(),
-    CNUCyberCampusScraper("202202654", "030722")
+    CNUCyberCampusScraper("id", "pw")
   ];
   NoticeManager().perPage = 10;
   runApp(const MainApp());
