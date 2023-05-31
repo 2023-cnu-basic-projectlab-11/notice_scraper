@@ -5,7 +5,7 @@ import 'package:notice_scraper/native_scrapers/cnu_college_eng.dart';
 import 'package:notice_scraper/native_scrapers/cnu_cyber_campus.dart';
 import 'package:notice_scraper/notice_manager.dart';
 //import 'package:notice_scraper/native_scrapers/cnu_cyber_campus.dart';
-//import 'private.dart';
+import 'private.dart';
 
 ThemeData _buildTheme(brightness) {
   var baseTheme = ThemeData(
@@ -22,7 +22,7 @@ ThemeData _buildTheme(brightness) {
 void main() {
   NoticeManager().scrapers = [
     CNUCollegeEngScraper(),
-    CNUCyberCampusScraper("id", "pw")
+    CNUCyberCampusScraper(id, pw)
   ];
   NoticeManager().perPage = 10;
   runApp(const MainApp());
@@ -40,7 +40,6 @@ class MainApp extends StatelessWidget {
       darkTheme: _buildTheme(Brightness.dark),
       themeMode: ThemeMode.system,
       home: const Homepage(),
-      debugShowCheckedModeBanner: false,
     );
   }
 }

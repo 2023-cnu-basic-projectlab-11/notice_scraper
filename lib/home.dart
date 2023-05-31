@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:notice_scraper/notice.dart';
 import 'package:notice_scraper/notice_list.dart';
 import 'package:notice_scraper/notice_manager.dart';
-import 'package:notice_scraper/site_add.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Homepage extends StatefulWidget {
@@ -15,7 +14,6 @@ class Homepage extends StatefulWidget {
 
 class HomepageState extends State<Homepage> {
   int selectedIndex = 0;
-  String newURL='';
   Origin? get currentOrigin => lists.elementAtOrNull(selectedIndex)?.origin;
   final List<NoticeList> lists = NoticeManager()
       .origins
@@ -59,26 +57,17 @@ class HomepageState extends State<Homepage> {
                     icon: const Icon(Icons.circle, size: 8),
                   )),
           const Divider(),
-          FloatingActionButton(
-            onPressed: () => {
-              siteAdd(),
-            },
-            child: const Icon(Icons.add),
-          ),
         ],
       ),
-      body: currentOrigin == null
-          ? const Text('등록된 사이트가 없습니다.')
-          : Column(children: [
-            Flexible(
-              flex: 1,
-                child: upperList()
-            ),
-            Expanded(
-              flex: 10,
-              child: IndexedStack(index: selectedIndex, children: lists),
-            )
-        ]),
+      body: Column(children: [
+        Flexible(flex: 1, child: upperList()),
+        currentOrigin == null
+            ? const Text('등록된 사이트가 없습니다.')
+            : Expanded(
+                flex: 10,
+                child: IndexedStack(index: selectedIndex, children: lists),
+              )
+      ]),
       floatingActionButton: currentOrigin == null
           ? null
           : FloatingActionButton(
@@ -91,7 +80,6 @@ class HomepageState extends State<Homepage> {
   void onPressedPerson() {
     log('Person button pressed');
   }
-
 
   Future<void> _buildOriginDialog(BuildContext context, Origin origin) {
     return showDialog<void>(
@@ -149,8 +137,8 @@ class HomepageState extends State<Homepage> {
         )
       ]);
 
-  Widget upperList(){
-    List<String> strlist=["공대", "사캠", "-", "-", "-", "-", "-", "-", "-", "-"];
+  Widget upperList() {
+    List<String> strlist = ["공대", "사캠", "-", "-", "-", "-", "-", "-", "-", "-"];
 
     return ListView.separated(
       padding: const EdgeInsets.all(5),
@@ -162,12 +150,11 @@ class HomepageState extends State<Homepage> {
             children: [
               FloatingActionButton(
                   child: Text(strlist.elementAt(index)),
-                  onPressed: (){
+                  onPressed: () {
                     setState(() {
-                      selectedIndex=index;
+                      selectedIndex = index;
                     });
-                  }
-              )
+                  })
             ],
           ),
         );
