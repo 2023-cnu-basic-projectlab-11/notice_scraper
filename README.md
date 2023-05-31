@@ -11,38 +11,38 @@
 Scraper는 공지를 얻어오는 고수준의 추상 클래스입니다.
 공지를 얻으려면 Scraper 클래스의 scrap() 메서드를 실행하시면 됩니다.
 
+scrap 메서드는 offset, limit을 선택적으로 넣을 수 있으며, ``scrap(1,10)``은 최근 나온 순서대로 2번째부터 10개의 공지를 가져옵니다. (인덱스가 0부터 시작)
+
 현재 구현된 Scraper의 세부 클래스는 다음과 같습니다.
 
 ### CNUCyberCampusScraper
 
 충남대 사캠 공지를 불러오는 Scraper입니다. 생성자에서 충남대 사캠의 아이디와 비밀번호를 받습니다. 공지를 얻기 위해 다음과 같은 예시 코드를 작성할 수 있습니다.
 
-공지는 **Stream** 형식으로 얻게 됩니다. Stream을 통해 데이터를 다루어야 합니다. 이는 한번에 공지 전체를 load하지 말고(한번에 전부 로딩하면 공지가 많은 경우 리소스를 많이 먹음), 필요에 따라 dynamic하게 load할 수 있게 하기위한 조치입니다.
-
 ```dart
-// 예시 1: Stream에서 나오는 공지들을 모두 모아 List로 만들기
-List<Notice> notices = await CNUCyberCampusScraper('아이디', '비밀번호').scrap().toList();
+// 예시 1: 공지 리스트 가져오기
+List<Notice> notices = await CNUCyberCampusScraper('아이디', '비밀번호').scrap();
 
-// 예시 2: Stream에서 공지를 얻을 때마다 출력하기
+// 예시 2: 공지를 가져와서 출력하기
 Scraper scraper = CNUCyberCampusScraper('아이디', '비밀번호');
  scraper.scrap().forEach((notice) => print(jsonEncode(notice)));
 ```
 
-## NoticeManager (아직 테스트 해보지 않아서 작동 안될 확률 높음)
+## NoticeManager 
 
-등록된 Scraper를 가지고 공지를 총괄하는 클래스입니다. Singleton 패턴으로 구현되어있으며, 보통의 경우 Scraper를 직접 호출하는 대신 여기서 공지를 얻어오게 됩니다. 공지는 사이트별로 가져올 수 있습니다. 이것 역시 **Stream** 의 형태로 주어집니다.
+등록된 Scraper를 가지고 공지를 총괄하는 클래스입니다. Singleton 패턴으로 구현되어있으며, 보통의 경우 Scraper를 직접 호출하는 대신 여기서 공지를 얻어오게 됩니다. 공지는 사이트별로 가져올 수 있습니다. 
 
-또한 Origin마다 가장 최근에 scrap된 공지의 날짜/시간도 알 수 있습니다. 이는 추후에 공지가 scrap되었을 때 알람을 주기 위해서 scrap된 공지가 원래 있던 공지인지, 아니면 새로 들어온 공지인지 알아내는데 쓰입니다. 
+또한 Origin마다 가장 최근에 scrap된 공지의 날짜/시간도 알 수 있습니다. 이는 추후에 공지가 scrap되었을 때 알람을 주기 위해서 scrap된 공지가 원래 있던 공지인지, 아니면 새로 들어온 공지인지 알아내는데 쓰입니다. 여기서 int값과 같이 튜플로 지정되는데, 이 값은 해당공지가 얼마나 연속으로 중복되어 나왔는지를 나타냅니다.
 
 ```dart
 // 현재 등록된 사이트들을 가져온다. Origin은 사이트 정보를 담고 있는 클래스이다.
 List<Origin> origins = NoticeManager().origins;
 
-// 리스트의 사이트 중 첫번째 사이트의 공지 목록을 불러와 List로 만든다.
-List<Notice> notices = await NoticeManager().scrap(origins.first).toList();
+// 리스트의 사이트 중 첫번째 사이트의 공지 목록을 불러온다.
+List<Notice> notices = await NoticeManager().scrap(origins.first);
 
 // 리스트의 사이트 중 첫번째 사이트에서 scrap된 가장 최근의 공지의 날짜/시간을 가져온다.
-DateTime latest = await NoticeManager().getLastUploadedAt(origins.first);
+(Notice, int) latest = await NoticeManager().getLastUploadedAt(origins.first);
 ```
 
 # 예상 기능 목록
@@ -54,5 +54,4 @@ DateTime latest = await NoticeManager().getLastUploadedAt(origins.first);
 - ~~앱에서 공지를 관리하는 전역 저장소를 구현하여, Scraper를 직접적으로 호출하지 않고, 저장소에서 Scraper를 이용해 저장소를 업데이트하는 느낌으로 공지를 관리하는 기능~~ -> 네이버 카페 글처럼 글이 매우 많은 경우에는 저장소를 일일히 업데이트하기에는 무리라 판단. 글이 새로 들어왔는지, 들어오지 않았는지만 확인하기 위해 일부만 스크랩하고, 실제 전체 스크랩은 앱에서 조회할 때 하는 방식으로 변환.
 - 로그인이 필요하던가 하는 등의 private한 공지 정보를 보호하기 위해 앱 자체에 로그인 기능을 넣고, 해당 비밀번호로 공지 정보를 암호화하는 기능.
     - 불러온 공지 뿐만 아니라, 해당 공지를 불러오기 위해 사용된 아이디, 비밀번호 등도 암호화해야함.
-- UI 부분은 Scraper를 직접 호출하지 않고, 그냥 저장소에서 공지를 불러오는 방식으로 공지를 가져오게 만들기
 - 앱이 종료되었을 때 백그라운드에서 스크랩을 수행하여 주기적으로 저장소의 공지를 업데이트하는 기능
