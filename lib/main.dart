@@ -4,14 +4,14 @@ import 'package:notice_scraper/home.dart';
 import 'package:notice_scraper/native_scrapers/cnu_college_eng.dart';
 import 'package:notice_scraper/native_scrapers/cnu_cyber_campus.dart';
 import 'package:notice_scraper/notice_manager.dart';
-//import 'package:notice_scraper/native_scrapers/cnu_cyber_campus.dart';
+import 'package:notice_scraper/native_scrapers/cnu_cyber_campus.dart';
 import 'private.dart';
 
 ThemeData _buildTheme(brightness) {
   var baseTheme = ThemeData(
     brightness: brightness,
     useMaterial3: true,
-    colorSchemeSeed: Colors.indigo,
+    colorSchemeSeed: Colors.white,
   );
 
   return baseTheme.copyWith(
